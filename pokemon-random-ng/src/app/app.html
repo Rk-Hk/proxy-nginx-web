@@ -1,0 +1,138 @@
+<div class="app-shell">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <div class="logo">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">PokéRandom</span>
+      </div>
+      <span class="header-tagline">Discover a new Pokémon every time</span>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="app-main">
+    <!-- Generate button -->
+    <div class="generate-section">
+      @if (lastNumber()) {
+        <p class="roll-badge">Roll #{{ lastNumber() }}</p>
+      }
+      <button
+        class="generate-btn"
+        [class.loading]="loading()"
+        (click)="generateRandom()"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <span class="spinner"></span>
+          <span>Fetching Pokémon...</span>
+        } @else {
+          <span class="btn-icon">🎲</span>
+          <span>Generate Random Pokémon</span>
+        }
+      </button>
+    </div>
+
+    <!-- Error state -->
+    @if (error()) {
+      <div class="error-card">
+        <span class="error-icon">⚠️</span>
+        <p>{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Loading skeleton -->
+    @if (loading()) {
+      <div class="pokemon-card skeleton-card">
+        <div class="sk sk-img"></div>
+        <div class="sk-body">
+          <div class="sk sk-title"></div>
+          <div class="sk sk-subtitle"></div>
+          <div class="sk sk-bar"></div>
+          <div class="sk sk-bar"></div>
+          <div class="sk sk-bar"></div>
+        </div>
+      </div>
+    }
+
+    <!-- Pokemon card -->
+    @if (pokemon() && !loading()) {
+      <div class="pokemon-card appear">
+        <!-- Number badge -->
+        <span class="poke-number">#{{ pokemon()!.id.toString().padStart(3, '0') }}</span>
+
+        <!-- Artwork -->
+        <div class="artwork-wrapper">
+          <div class="artwork-glow"></div>
+          <img
+            [src]="artworkUrl()"
+            [alt]="pokemon()!.name"
+            class="pokemon-artwork"
+          />
+        </div>
+
+        <!-- Info -->
+        <div class="poke-info">
+          <h2 class="poke-name">{{ capitalize(pokemon()!.name) }}</h2>
+
+          <!-- Types -->
+          <div class="poke-types">
+            @for (t of pokemon()!.types; track t.type.name) {
+              <span
+                class="type-badge"
+                [style.background]="typeColor(t.type.name)"
+              >{{ capitalize(t.type.name) }}</span>
+            }
+          </div>
+
+          <!-- Meta -->
+          <div class="poke-meta">
+            <div class="meta-item">
+              <span class="meta-label">Height</span>
+              <span class="meta-value">{{ (pokemon()!.height / 10).toFixed(1) }} m</span>
+            </div>
+            <div class="meta-divider"></div>
+            <div class="meta-item">
+              <span class="meta-label">Weight</span>
+              <span class="meta-value">{{ (pokemon()!.weight / 10).toFixed(1) }} kg</span>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="poke-stats">
+            @for (stat of mainStat(); track stat.name) {
+              <div class="stat-row">
+                <span class="stat-name">{{ stat.name }}</span>
+                <span class="stat-value">{{ stat.value }}</span>
+                <div class="stat-bar-track">
+                  <div
+                    class="stat-bar-fill"
+                    [style.width.%]="stat.percent"
+                    [style.background]="'var(--accent)'"
+                  ></div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Empty state -->
+    @if (!pokemon() && !loading() && !error()) {
+      <div class="empty-state">
+        <div class="poke-ball-icon">
+          <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" width="80" height="80">
+            <circle cx="50" cy="50" r="48" stroke="rgba(255,255,255,0.15)" stroke-width="4"/>
+            <path d="M2 50 Q50 20 98 50" fill="rgba(255,255,255,0.08)"/>
+            <path d="M2 50 Q50 80 98 50" fill="rgba(255,255,255,0.04)"/>
+            <line x1="2" y1="50" x2="98" y2="50" stroke="rgba(255,255,255,0.15)" stroke-width="4"/>
+            <circle cx="50" cy="50" r="12" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="3"/>
+            <circle cx="50" cy="50" r="5" fill="rgba(255,255,255,0.4)"/>
+          </svg>
+        </div>
+        <p>Click the button to discover your Pokémon!</p>
+      </div>
+    }
+  </main>
+</div>
