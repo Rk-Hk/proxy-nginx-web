@@ -1,6 +1,6 @@
 
 #ETAPA 1: Construccion de la app
-FROM node:18-alpine as build-step
+FROM node:24-alpine AS build-step
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
