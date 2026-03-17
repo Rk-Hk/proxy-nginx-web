@@ -16,7 +16,7 @@ RUN npm run build
 
 
 # Etapa 2: Producción con Nginx (Esta parte no cambia)
-FROM  ngnix:stable-alpine
+FROM  nginx:stable-alpine
 COPY --from=build-step /app/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
